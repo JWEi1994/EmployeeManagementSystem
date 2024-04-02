@@ -2,14 +2,17 @@ package com.ems.employeemanagement.controller;
 
 import com.ems.employeemanagement.model.Employee;
 import com.ems.employeemanagement.service.EmployeeServices;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/employees")
+@Validated
 public class EmployeeController {
     @Autowired
     private EmployeeServices employeeServices;
@@ -35,7 +38,7 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
+    public ResponseEntity<Employee> createEmployee(@Valid @RequestBody Employee employee) {
 
         Employee createEmployee = employeeServices.createEmployee(employee);
 
