@@ -1,7 +1,6 @@
 package com.ems.employeemanagement.controller;
 
 import com.ems.employeemanagement.model.Employee;
-import com.ems.employeemanagement.repository.EmployeeRepository;
 import com.ems.employeemanagement.service.EmployeeServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

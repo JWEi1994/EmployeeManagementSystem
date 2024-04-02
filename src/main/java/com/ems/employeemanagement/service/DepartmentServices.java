@@ -1,10 +1,8 @@
 package com.ems.employeemanagement.service;
 
 import com.ems.employeemanagement.model.Department;
-import com.ems.employeemanagement.model.Employee;
 import com.ems.employeemanagement.repository.DepartmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.source.InvalidConfigurationPropertyValueException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

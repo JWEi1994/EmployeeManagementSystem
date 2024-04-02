@@ -1,12 +1,9 @@
 package com.ems.employeemanagement.service;
 
-import com.ems.employeemanagement.model.Department;
+
 import com.ems.employeemanagement.model.Employee;
-import com.ems.employeemanagement.repository.DepartmentRepository;
 import com.ems.employeemanagement.repository.EmployeeRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.source.InvalidConfigurationPropertyValueException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,9 +14,6 @@ public class EmployeeServices {
     @Autowired
     private EmployeeRepository employeeRepository;
 
-    @Autowired
-    private DepartmentRepository departmentRepository;
-
     public List<Employee> getAllEmployees() {
         return employeeRepository.findAll();
     }
@@ -29,11 +23,6 @@ public class EmployeeServices {
     }
 
     public Employee createEmployee(Employee employee) {
-
-//        Department department = departmentRepository.findById(departmentId).orElseThrow(() -> new EntityNotFoundException("Department not found"));
-//
-//        employee.setDepartment(department);
-
         return employeeRepository.save(employee);
     }
 
