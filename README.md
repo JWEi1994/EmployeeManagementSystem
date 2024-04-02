@@ -1,5 +1,15 @@
 # Employee Management System
 
+<!-- TOC -->
+* [Employee Management System](#employee-management-system)
+  * [Project Overview](#project-overview)
+  * [Folder Structure](#folder-structure)
+  * [Features Implemented](#features-implemented)
+  * [API Endpoints](#api-endpoints)
+  * [Build and Run Instructions](#build-and-run-instructions)
+  * [Notes](#notes)
+<!-- TOC -->
+
 ## Project Overview
 The Employee Management System is a Java Spring Boot application designed to manage employees, departments, and projects within a company. It provides RESTful API endpoints for performing CRUD operations on employee data and includes features such as security, validation, audit logging, and performance optimization.
 
