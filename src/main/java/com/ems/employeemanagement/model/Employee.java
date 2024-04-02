@@ -2,6 +2,7 @@ package com.ems.employeemanagement.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
@@ -26,4 +27,15 @@ public class Employee {
             joinColumns = @JoinColumn(name = "employee_id"),
             inverseJoinColumns = @JoinColumn(name = "project_id"))
     private List<Project> projects;
+
+    public Employee() {
+        // Default constructor
+    }
+
+    public Employee(Long id, String name, String position, Long departmentId) {
+        this.id = id;
+        this.name = name;
+        this.position = position;
+        this.department = department;
+    }
 }
