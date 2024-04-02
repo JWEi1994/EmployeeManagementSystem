@@ -17,9 +17,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .authorizeHttpRequests((requests)->requests
+                .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()
                 )
@@ -28,7 +28,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(){
+    public UserDetailsService userDetailsService() {
         UserDetails userDetails = User.withDefaultPasswordEncoder()
                 .username("user")
                 .password("password")
