@@ -9,12 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/employees")
+@RequestMapping("/api/employees")
 public class EmployeeController {
     @Autowired
     private EmployeeServices employeeServices;
 
-    @GetMapping("/employees")
+    @GetMapping
     public ResponseEntity<List<Employee>> getAllEmployees() {
 
         List<Employee> employees = employeeServices.getAllEmployees();
@@ -22,7 +22,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employees);
     }
 
-    @GetMapping("/employees/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
 
         Employee employee = employeeServices.getEmployeeById(id);
@@ -34,7 +34,7 @@ public class EmployeeController {
         }
     }
 
-    @PostMapping("/employees")
+    @PostMapping
     public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
 
         Employee createEmployee = employeeServices.createEmployee(employee);
@@ -42,7 +42,7 @@ public class EmployeeController {
         return ResponseEntity.ok(createEmployee);
     }
 
-    @PutMapping("/employees/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
         Employee updatedEmployee = employeeServices.updateEmployee(id, employee);
         if (updatedEmployee != null) {
@@ -52,7 +52,7 @@ public class EmployeeController {
         }
     }
 
-    @DeleteMapping("/employees/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
         employeeServices.deleteEmployee(id);
         return ResponseEntity.noContent().build();
