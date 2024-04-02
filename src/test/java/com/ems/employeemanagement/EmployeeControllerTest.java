@@ -78,21 +78,18 @@ public class EmployeeControllerTest {
         // Verify
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
+        assertNotNull(response.getBody().getId());
+
+        // Optional: Verify the URI in the Location header
+        assertNotNull(response.getHeaders().getLocation());
+        assertEquals("/api/employees/" + response.getBody().getId(), response.getHeaders().getLocation().getPath());
     }
 
     @Test
     public void testUpdateEmployee() {
         // Setup
         Long id = 1L;
-        Employee existingEmployee = new Employee();
-        existingEmployee.setId(id);
-        existingEmployee.setName("Jane Doe");
-        existingEmployee.setPosition("Senior Software Engineer");
-
-        Employee updatedEmployee = new Employee();
-        updatedEmployee.setId(id);
-        updatedEmployee.setName("Updated Name");
-        updatedEmployee.setPosition("Updated Position");
+        Employee updatedEmployee = new Employee(1L,"Ali","Software Engineer",1L);
 
         // Test
         ResponseEntity<Employee> response = employeeController.updateEmployee(id, updatedEmployee);

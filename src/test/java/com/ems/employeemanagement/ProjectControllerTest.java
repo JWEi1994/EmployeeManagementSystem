@@ -34,7 +34,7 @@ public class ProjectControllerTest {
         when(projectService.getAllProjects()).thenReturn(projects);
 
         // Test
-        ResponseEntity<List<Project>> response = (ResponseEntity<List<Project>>) projectController.getAllProjects();
+        ResponseEntity<List<Project>> response = projectController.getAllProjects();
 
         // Verify
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -63,9 +63,6 @@ public class ProjectControllerTest {
         Project project = new Project();
         project.setName("Project X");
 
-        // Mock the service method
-        when(projectService.createProject(project)).thenReturn(project);
-
         // Test
         ResponseEntity<Project> response = projectController.createProject(project);
 
@@ -85,10 +82,6 @@ public class ProjectControllerTest {
         Project updatedProject = new Project();
         updatedProject.setId(id);
         updatedProject.setName("Updated Project");
-
-        // Mock the service method
-        when(projectService.getProjectById(id)).thenReturn(existingProject);
-        when(projectService.updateProject(id, updatedProject)).thenReturn(updatedProject);
 
         // Test
         ResponseEntity<Project> response = projectController.updateProject(id, updatedProject);

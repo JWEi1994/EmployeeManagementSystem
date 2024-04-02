@@ -1,5 +1,6 @@
 package com.ems.employeemanagement.controller;
 
+import com.ems.employeemanagement.exception.ResourceNotFoundException;
 import com.ems.employeemanagement.model.Department;
 import com.ems.employeemanagement.service.DepartmentServices;
 import jakarta.validation.Valid;
@@ -15,35 +16,52 @@ import java.util.List;
 @RequestMapping("/api/departments")
 @Validated
 public class DepartmentController {
-    @Autowired
-    private DepartmentServices departmentService;
+
+    private final DepartmentServices departmentServices;
+
+    public DepartmentController(DepartmentServices departmentServices){
+        this.departmentServices = departmentServices;
+    }
 
     @GetMapping
-    public List<Department> getAllDepartments() {
-        return departmentService.getAllDepartments();
+    public ResponseEntity<List<Department>> getAllDepartments() {
+        List<Department> departments = departmentServices.getAllDepartments();
+        return ResponseEntity.ok(departments);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Department> getDepartmentById(@PathVariable Long id) {
-        Department department = departmentService.getDepartmentById(id);
+        Department department = departmentServices.getDepartmentById(id);
         return ResponseEntity.ok(department);
     }
 
     @PostMapping
     public ResponseEntity<Department> createDepartment(@Valid @RequestBody Department department) {
-        Department createDepartment = departmentService.createDepartment(department);
+        Department createDepartment = departmentServices.createDepartment(department);
         return ResponseEntity.status(HttpStatus.CREATED).body(createDepartment);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Department> updateDepartment(@PathVariable Long id, @RequestBody Department department) {
-        Department updatedDepartment = departmentService.updateDepartment(id, department);
-        return ResponseEntity.ok(updatedDepartment);
+    public ResponseEntity<Department> updateDepartment(@PathVariable Long id, @Valid @RequestBody Department departmentDetails) {
+
+        try {
+            Department department = departmentServices.getDepartmentById(id);
+            if (department == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            department.setName(departmentDetails.getName()); // Update department name
+            Department savedDepartment = departmentServices.updateDepartment(department); // Save the updated department
+
+            return ResponseEntity.ok(savedDepartment);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDepartment(@PathVariable Long id) {
-        departmentService.deleteDepartment(id);
+        departmentServices.deleteDepartment(id);
         return ResponseEntity.noContent().build();
     }
 }

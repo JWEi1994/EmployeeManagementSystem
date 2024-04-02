@@ -3,24 +3,38 @@ package com.ems.employeemanagement;
 import com.ems.employeemanagement.controller.DepartmentController;
 import com.ems.employeemanagement.model.Department;
 import com.ems.employeemanagement.service.DepartmentServices;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
+@WebMvcTest
 public class DepartmentControllerTest {
+    @Autowired
+    private MockMvc mockMvc;
     @InjectMocks
     private DepartmentController departmentController;
 
@@ -35,7 +49,7 @@ public class DepartmentControllerTest {
         Mockito.when(departmentService.getAllDepartments()).thenReturn(departments);
 
         // Test
-        ResponseEntity<List<Department>> response = (ResponseEntity<List<Department>>) departmentController.getAllDepartments();
+        ResponseEntity<List<Department>> response = departmentController.getAllDepartments();
 
         // Verify
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -59,43 +73,56 @@ public class DepartmentControllerTest {
     }
 
     @Test
-    public void testCreateDepartment() {
+    public void testCreateDepartment() throws Exception {
         // Setup
         Department department = new Department();
         department.setName("Engineering");
 
-        // Mock the service method
-        when(departmentService.createDepartment(department)).thenReturn(department);
+        Department createdDepartment = new Department();
+        createdDepartment.setId(1L);
+        createdDepartment.setName("Engineering");
+
+        given(departmentService.createDepartment(department)).willReturn(createdDepartment);
 
         // Test
-        ResponseEntity<Department> response = departmentController.createDepartment(department);
-
-        // Verify
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(department, response.getBody());
+        mockMvc.perform(post("/api/departments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(department)))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("Engineering")));
     }
 
     @Test
-    public void testUpdateDepartment() {
+    public void testUpdateDepartment() throws Exception {
         // Setup
         Long id = 1L;
-        Department existingDepartment = new Department();
-        existingDepartment.setId(id);
-        existingDepartment.setName("Engineering");
-
         Department updatedDepartment = new Department();
         updatedDepartment.setId(id);
-        updatedDepartment.setName("Updated Department");
+        updatedDepartment.setName("Engineering");
 
-        // Mock the service method
-        when(departmentService.getDepartmentById(id)).thenReturn(existingDepartment);
-        when(departmentService.updateDepartment(id, updatedDepartment)).thenReturn(updatedDepartment);
+        Department existingDepartment = new Department();
+        existingDepartment.setId(id);
+        existingDepartment.setName("Department");
+
+        given(departmentService.getDepartmentById(id)).willReturn(existingDepartment);
+        given(departmentService.updateDepartment(existingDepartment)).willReturn(updatedDepartment);
+
 
         // Test
-        ResponseEntity<Department> response = departmentController.updateDepartment(id, updatedDepartment);
+        mockMvc.perform(put("/api/departments/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(updatedDepartment)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)))
+                .andExpect(jsonPath("$.name", is("Updated Department")));
+    }
 
-        // Verify
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(updatedDepartment, response.getBody());
+    private static String asJsonString(final Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }

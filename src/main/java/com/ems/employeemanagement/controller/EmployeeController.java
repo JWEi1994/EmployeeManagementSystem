@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -42,17 +44,22 @@ public class EmployeeController {
 
         Employee createEmployee = employeeServices.createEmployee(employee);
 
-        return ResponseEntity.ok(createEmployee);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(createEmployee.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(createEmployee);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
-        Employee updatedEmployee = employeeServices.updateEmployee(id, employee);
-        if (updatedEmployee != null) {
-            return ResponseEntity.ok(updatedEmployee);
-        } else {
+        Employee existingEmployee = employeeServices.getEmployeeById(id);
+        if (existingEmployee == null) {
             return ResponseEntity.notFound().build();
         }
+        Employee updateEmployee = employeeServices.updateEmployee(id, employee);
+        return ResponseEntity.ok(updateEmployee);
     }
 
     @DeleteMapping("/{id}")

@@ -11,13 +11,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
+
 @Service
 @Transactional
 @CacheConfig(cacheNames = "departments")
 public class DepartmentServices {
 
-    @Autowired
-    private DepartmentRepository departmentRepository;
+    private final DepartmentRepository departmentRepository;
+
+    public DepartmentServices(DepartmentRepository departmentRepository){
+        this.departmentRepository = departmentRepository;
+    }
 
     @Cacheable
     public List<Department> getAllDepartments() {
@@ -32,17 +37,12 @@ public class DepartmentServices {
         return departmentRepository.save(department);
     }
 
-    public Department updateDepartment(Long id, Department department) {
-        Department existingDepartment = departmentRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Department not found with id" + id));
-        if (existingDepartment != null) {
-            existingDepartment.setName(department.getName());
-            // Update other fields as needed
-            return departmentRepository.save(existingDepartment);
-        }
-        return null;
+    public Department updateDepartment(Department department) {
+        return departmentRepository.save(department);
     }
 
     public void deleteDepartment(Long id) {
         departmentRepository.deleteById(id);
     }
+
 }
